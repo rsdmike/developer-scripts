@@ -336,6 +336,8 @@ services:
         aliases:
         - edgex-device-virtual
     volumes:
+    - ./deviceoverride/configuration.toml:/res/docker/configuration.toml
+    - ./deviceoverride/device.virtual.int.yaml:/res/device.virtual.int.yaml
     - db-data:/data/db
     - log-data:/edgex/logs
     - consul-config:/consul/config
