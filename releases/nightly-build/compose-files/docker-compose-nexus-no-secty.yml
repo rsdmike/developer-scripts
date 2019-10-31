@@ -251,6 +251,8 @@ services:
       edgex-network:
         aliases:
           - edgex-app-service-configurable-lab
+    volumes:
+      - ./appserviceoverride/configuration.toml:/res/mqtt-export/configuration.toml
     environment:
       <<: *common-variables
       edgex_service: http://edgex-app-service-configurable-lab:48100
