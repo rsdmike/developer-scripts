@@ -23,6 +23,10 @@ version: '3.4'
 # all common shared environment variables defined here:
 x-common-env-variables: &common-variables
   EDGEX_SECURITY_SECRET_STORE: "false"
+  edgex_registry: consul://edgex-core-consul:8500
+  Clients_CoreData_Host: edgex-core-data
+  Clients_Logging_Host: edgex-support-logging
+  Logging_EnableRemote: "true"
 
 volumes:
   db-data:
@@ -32,6 +36,15 @@ volumes:
   portainer_data:
 
 services:
+  mqtt:
+    image: eclipse-mosquitto:1.5.8
+    ports:
+      - "1883:1883"
+    container_name: mqtt
+    hostname: mqtt
+    networks:
+      - edgex-network
+
   volume:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-volume:1.1.0
     container_name: edgex-files
@@ -228,6 +241,27 @@ services:
       - consul-data:/consul/data
     depends_on:
       - metadata
+  app-service-lab:
+    image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable:master
+    ports:
+      - "48100:48100"
+    container_name: edgex-app-service-configurable-lab
+    hostname: edgex-app-service-configurable-lab
+    networks:
+      edgex-network:
+        aliases:
+          - edgex-app-service-configurable-lab
+    environment:
+      <<: *common-variables
+      edgex_service: http://edgex-app-service-configurable-lab:48100
+      edgex_profile: mqtt-export
+      Writable_Pipeline_Functions_MQTTSend_Addressable_Address: mqtt
+      Service_Host: edgex-app-service-configurable-lab
+      MessageBus_SubscribeHost_Host: edgex-core-data
+    depends_on:
+      - consul
+      - logging
+      - data
 
   export-client:
     image: nexus3.edgexfoundry.org:10004/docker-export-client-go:1.1.0
