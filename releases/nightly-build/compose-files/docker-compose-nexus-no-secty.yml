@@ -244,7 +244,7 @@ services:
   app-service-lab:
     image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable:master
     ports:
-      - "48100:48100"
+      - "48095:48095"
     container_name: edgex-app-service-configurable-lab
     hostname: edgex-app-service-configurable-lab
     networks:
@@ -255,7 +255,7 @@ services:
       - ./appserviceoverride/configuration.toml:/res/mqtt-export/configuration.toml
     environment:
       <<: *common-variables
-      edgex_service: http://edgex-app-service-configurable-lab:48100
+      edgex_service: http://edgex-app-service-configurable-lab:48095
       edgex_profile: mqtt-export
       Writable_Pipeline_Functions_MQTTSend_Addressable_Address: mqtt
       Service_Host: edgex-app-service-configurable-lab
